@@ -1,0 +1,8 @@
+[
+  {
+    "name": "element (gzip)",
+    "path": "dist/element/index.js",
+    "limit": "15 kB",
+    "gzip": true
+  }
+]
