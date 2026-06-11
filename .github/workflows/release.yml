@@ -5,6 +5,10 @@ name: Release
 on:
   release:
     types: [published]
+# Least privilege: publishing authenticates with NPM_TOKEN, never the
+# GITHUB_TOKEN, so the job needs no write scopes.
+permissions:
+  contents: read
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:

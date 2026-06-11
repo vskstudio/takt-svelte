@@ -63,6 +63,8 @@ import '@vskstudio/takt-svelte/element'
 
 Importing the subpath registers `<takt-analytics>` automatically; `defineTaktElement()` is also exported for explicit, guarded registration.
 
+Attributes mirror the `<Takt />` props, with two differences: `files` is boolean-only (the element can't take an extension array — for a custom list use `<Takt />` or the actions API), and the privacy flags (`spa`, `respectDnt`, `excludeLocalhost`) default to `true` and are opted out with the explicit string value `"false"` (e.g. `spa="false"`).
+
 ## C — Functional / actions
 
 Wire init yourself and track declaratively:
@@ -77,6 +79,13 @@ Wire init yourself and track declaratively:
   S'inscrire
 </button>
 ```
+
+## Svelte version support
+
+Entries **A** (`<Takt />`, `useTakt()`) and **C** (`./actions`) ship as Svelte
+source and support `svelte@^4 || ^5`. Entry **B** (`./element`) ships as a
+pre-compiled, self-contained bundle, so it works regardless of the host's Svelte
+version (or with no Svelte at all). The test suite runs on Svelte 5.
 
 ## License
 

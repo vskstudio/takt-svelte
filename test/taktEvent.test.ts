@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { render } from '@testing-library/svelte'
 
 vi.mock('@vskstudio/takt-core', () => ({
   track: vi.fn(),
@@ -9,6 +10,7 @@ vi.mock('@vskstudio/takt-core', () => ({
 }))
 
 import { taktEvent } from '../src/lib/actions/taktEvent'
+import TaktEventFixture from './fixtures/TaktEventFixture.svelte'
 import * as core from '@vskstudio/takt-core'
 
 const track = vi.mocked(core.track)
@@ -29,6 +31,19 @@ describe('taktEvent action', () => {
     action.update({ name: 'B', props: { x: '1' } })
     node.click()
     expect(track).toHaveBeenCalledWith('B', { props: { x: '1' } })
+  })
+
+  it('reacts to reactive parameter changes through use: (real Svelte wiring)', async () => {
+    const { getByTestId, rerender } = render(TaktEventFixture, {
+      props: { params: { name: 'A' } },
+    })
+    const btn = getByTestId('btn')
+    btn.click()
+    expect(track).toHaveBeenLastCalledWith('A', undefined)
+
+    await rerender({ params: { name: 'B', props: { x: '1' } } })
+    btn.click()
+    expect(track).toHaveBeenLastCalledWith('B', { props: { x: '1' } })
   })
 
   it('removes the listener on destroy', () => {

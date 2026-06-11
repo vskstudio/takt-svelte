@@ -3,6 +3,9 @@ on:
   push:
     branches: [main]
   pull_request:
+# Least privilege: CI only reads the repo.
+permissions:
+  contents: read
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
