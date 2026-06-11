@@ -1,5 +1,7 @@
 import TaktAnalytics from './TaktAnalytics.svelte'
 
+const TAG = 'takt-analytics'
+
 let defined = false
 
 /**
@@ -8,8 +10,8 @@ let defined = false
  */
 export function defineTaktElement(): void {
   if (defined || typeof customElements === 'undefined') return
-  if (!customElements.get('takt-analytics')) {
-    customElements.define('takt-analytics', TaktAnalytics as unknown as CustomElementConstructor)
+  if (!customElements.get(TAG)) {
+    customElements.define(TAG, TaktAnalytics as unknown as CustomElementConstructor)
   }
   defined = true
 }

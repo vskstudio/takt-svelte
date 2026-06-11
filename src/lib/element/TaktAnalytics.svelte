@@ -19,6 +19,8 @@
   export let domain: string | undefined = undefined
   export let endpoint: string | undefined = undefined
   export let outbound = false
+  // Web-component attributes are string/boolean only — unlike <Takt />, the
+  // element cannot take a file-extension array; enableFiles() uses core defaults.
   export let files = false
   export let spa = true
   export let respectDnt = true
