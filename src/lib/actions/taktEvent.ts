@@ -1,4 +1,5 @@
 import { track } from '@vskstudio/takt-core'
+import type { ActionReturn } from 'svelte/action'
 
 export interface TaktEventParams {
   name: string
@@ -9,9 +10,15 @@ export interface TaktEventParams {
  * Svelte action: tracks a custom event on click. Reactive — updating the
  * parameter changes the tracked name/props; the listener is cleaned up on destroy.
  */
-export function taktEvent(node: HTMLElement, params: TaktEventParams) {
+export function taktEvent(
+  node: HTMLElement,
+  params: TaktEventParams,
+): ActionReturn<TaktEventParams> & { update(next: TaktEventParams): void; destroy(): void } {
   let current = params
-  const handler = (): void => track(current.name, { props: current.props })
+  const handler = (): void => {
+    const opts = current.props ? { props: current.props } : undefined
+    track(current.name, opts)
+  }
   node.addEventListener('click', handler)
   return {
     update(next: TaktEventParams): void {

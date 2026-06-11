@@ -26,7 +26,7 @@ describe('taktEvent action', () => {
   it('reacts to parameter updates', () => {
     const node = document.createElement('button')
     const action = taktEvent(node, { name: 'A' })
-    action.update?.({ name: 'B', props: { x: '1' } })
+    action.update({ name: 'B', props: { x: '1' } })
     node.click()
     expect(track).toHaveBeenCalledWith('B', { props: { x: '1' } })
   })
@@ -34,7 +34,7 @@ describe('taktEvent action', () => {
   it('removes the listener on destroy', () => {
     const node = document.createElement('button')
     const action = taktEvent(node, { name: 'A' })
-    action.destroy?.()
+    action.destroy()
     node.click()
     expect(track).not.toHaveBeenCalled()
   })
