@@ -5,6 +5,10 @@ export default defineConfig({
   plugins: [
     svelte({
       hot: false,
+      // Compile the element with `customElement: true` so it produces a real
+      // HTMLElement subclass (exposed on `Component.element`) that can boot in
+      // jsdom. The jsdom environment already drives Vitest's web/client
+      // transform, so no extra transformMode tweaking is needed.
       dynamicCompileOptions({ filename }) {
         if (filename.includes('/element/')) return { customElement: true }
       },

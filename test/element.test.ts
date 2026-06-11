@@ -1,23 +1,93 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
-vi.mock('@vskstudio/takt-core', () => ({
-  createTakt: vi.fn(() => ({
-    enableSpa: vi.fn(() => vi.fn()),
-    enableOutbound: vi.fn(() => vi.fn()),
-    enableFiles: vi.fn(() => vi.fn()),
-    pageview: vi.fn(),
+// Mock core: createTakt returns spies so tests assert wiring, never real reqs.
+const { enableSpa, enableOutbound, enableFiles, pageview, createTakt } = vi.hoisted(() => {
+  const enableSpa = vi.fn(() => vi.fn())
+  const enableOutbound = vi.fn(() => vi.fn())
+  const enableFiles = vi.fn(() => vi.fn())
+  const pageview = vi.fn()
+  const instance = {
+    enableSpa,
+    enableOutbound,
+    enableFiles,
+    pageview,
     track: vi.fn(),
     optOut: vi.fn(),
     optIn: vi.fn(),
-  })),
-}))
+  }
+  const createTakt = vi.fn(() => instance)
+  return { enableSpa, enableOutbound, enableFiles, pageview, createTakt }
+})
+vi.mock('@vskstudio/takt-core', () => ({ createTakt }))
+
+// Importing the index registers <takt-analytics> as a side effect.
+import { defineTaktElement } from '../src/lib/element/index'
+
+/** Create, configure, mount the element, then wait for onMount to flush. */
+async function boot(attrs: Record<string, string> = {}): Promise<HTMLElement> {
+  const el = document.createElement('takt-analytics')
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v)
+  document.body.appendChild(el)
+  // Let Svelte's onMount microtask run.
+  await Promise.resolve()
+  await new Promise((r) => setTimeout(r, 0))
+  return el
+}
 
 describe('<takt-analytics> registration', () => {
-  beforeEach(() => vi.clearAllMocks())
-
-  it('defineTaktElement registers the custom element and is idempotent', async () => {
-    const { defineTaktElement } = await import('../src/lib/element/index')
+  it('defineTaktElement registers the custom element and is idempotent', () => {
+    expect(() => defineTaktElement()).not.toThrow()
     expect(() => defineTaktElement()).not.toThrow()
     expect(customElements.get('takt-analytics')).toBeTruthy()
+  })
+})
+
+describe('<takt-analytics> boot behavior', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    document.body.innerHTML = ''
+  })
+
+  it('with no boolean attributes: privacy defaults stay TRUE, SPA on, pageview fires (FIX 1 regression)', async () => {
+    await boot({ domain: 'exemple.fr' })
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        domain: 'exemple.fr',
+        respectDnt: true,
+        excludeLocalhost: true,
+      }),
+    )
+    expect(enableSpa).toHaveBeenCalledTimes(1)
+    expect(enableOutbound).not.toHaveBeenCalled()
+    expect(enableFiles).not.toHaveBeenCalled()
+    expect(pageview).toHaveBeenCalledTimes(1)
+  })
+
+  it('with outbound attribute present: enableOutbound is called', async () => {
+    await boot({ domain: 'exemple.fr', outbound: '' })
+    expect(enableOutbound).toHaveBeenCalledTimes(1)
+  })
+
+  it('with spa="false": enableSpa is NOT called', async () => {
+    await boot({ domain: 'exemple.fr', spa: 'false' })
+    expect(enableSpa).not.toHaveBeenCalled()
+    // pageview still fires regardless of SPA tracking.
+    expect(pageview).toHaveBeenCalledTimes(1)
+  })
+
+  it('with respectDnt="false" / excludeLocalhost="false": privacy flags are disabled', async () => {
+    await boot({ domain: 'exemple.fr', respectDnt: 'false', excludeLocalhost: 'false' })
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ respectDnt: false, excludeLocalhost: false }),
+    )
+  })
+
+  it('on disconnect: collected disposers run', async () => {
+    const spaDispose = vi.fn()
+    enableSpa.mockReturnValueOnce(spaDispose)
+    const el = await boot({ domain: 'exemple.fr' })
+    el.remove()
+    await Promise.resolve()
+    expect(spaDispose).toHaveBeenCalledTimes(1)
   })
 })

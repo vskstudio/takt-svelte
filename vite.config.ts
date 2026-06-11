@@ -22,8 +22,8 @@ export default defineConfig({
       formats: ['es'],
       fileName: () => 'index.js',
     },
-    rollupOptions: {
-      external: ['@vskstudio/takt-core'],
-    },
+    // Entry B is a no-build, framework-agnostic embed target: bundle core in so
+    // `import '@vskstudio/takt-svelte/element'` resolves in a plain browser
+    // without an import map. Nothing is externalized.
   },
 })
