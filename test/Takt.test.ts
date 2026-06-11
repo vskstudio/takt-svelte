@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/svelte'
+import { get } from 'svelte/store'
 
 // Mock the core so tests assert wiring, never real requests.
 const { enableSpa, enableOutbound, enableFiles, pageview, createTakt } = vi.hoisted(() => {
@@ -34,7 +35,7 @@ describe('<Takt />', () => {
     expect(enableOutbound).not.toHaveBeenCalled()
     expect(enableFiles).not.toHaveBeenCalled()
     expect(pageview).toHaveBeenCalledTimes(1)
-    expect(taktStore).toBeDefined()
+    expect(get(taktStore)).not.toBeNull()
   })
 
   it('enables only the toggled features and passes a file extension list', () => {
@@ -53,5 +54,6 @@ describe('<Takt />', () => {
     unmount()
     expect(spaDispose).toHaveBeenCalledTimes(1)
     expect(outboundDispose).toHaveBeenCalledTimes(1)
+    expect(get(taktStore)).toBeNull()
   })
 })
