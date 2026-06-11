@@ -1,6 +1,21 @@
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/sveltejs/branding/master/svelte-logo.svg" alt="Svelte" width="80" height="80" />
+
 # @vskstudio/takt-svelte
 
-Idiomatic [Svelte](https://svelte.dev) wrapper for [Takt](https://github.com/uyangx/takt-core) privacy-friendly analytics. SSR-safe, automatic SPA pageviews, three integration styles. Thin layer over `@vskstudio/takt-core` — it changes nothing about the wire payload or privacy logic.
+**Idiomatic [Svelte](https://svelte.dev) wrapper for [Takt](https://github.com/uyangx/takt-core) privacy-friendly analytics.**
+
+[![npm version](https://img.shields.io/npm/v/@vskstudio/takt-svelte?color=ff3e00&logo=npm)](https://www.npmjs.com/package/@vskstudio/takt-svelte)
+[![Svelte](https://img.shields.io/badge/Svelte-4%20%7C%7C%205-ff3e00?logo=svelte&logoColor=white)](https://svelte.dev)
+[![bundle size](https://img.shields.io/bundlephobia/minzip/@vskstudio/takt-svelte?color=ff3e00&label=element%20gzip)](https://bundlephobia.com/package/@vskstudio/takt-svelte)
+[![license](https://img.shields.io/npm/l/@vskstudio/takt-svelte?color=ff3e00)](./LICENSE)
+
+</div>
+
+---
+
+SSR-safe, automatic SPA pageviews, three integration styles. A thin layer over `@vskstudio/takt-core` — it changes nothing about the wire payload or privacy logic.
 
 ## Install
 
