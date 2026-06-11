@@ -1,15 +1,30 @@
 {
   "name": "@vskstudio/takt-svelte",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Idiomatic Svelte wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
   "type": "module",
-  "sideEffects": ["./dist/element/index.js"],
-  "keywords": ["analytics", "privacy", "svelte", "sveltekit", "takt"],
+  "sideEffects": [
+    "./dist/element/index.js"
+  ],
+  "keywords": [
+    "analytics",
+    "privacy",
+    "svelte",
+    "sveltekit",
+    "takt"
+  ],
   "homepage": "https://github.com/uyangx/takt-svelte#readme",
-  "repository": { "type": "git", "url": "git+https://github.com/uyangx/takt-svelte.git" },
-  "bugs": { "url": "https://github.com/uyangx/takt-svelte/issues" },
-  "publishConfig": { "access": "public" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uyangx/takt-svelte.git"
+  },
+  "bugs": {
+    "url": "https://github.com/uyangx/takt-svelte/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -26,7 +41,9 @@
       "import": "./dist/element/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "pnpm build:lib && pnpm build:element",
     "build:lib": "svelte-package --input src/lib --output dist",
