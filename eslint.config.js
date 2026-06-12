@@ -3,7 +3,7 @@ import svelte from 'eslint-plugin-svelte'
 import svelteParser from 'svelte-eslint-parser'
 
 export default [
-  { ignores: ['dist/**', 'node_modules/**', '.svelte-kit/**'] },
+  { ignores: ['**/dist/**', '**/node_modules/**', '**/.svelte-kit/**', '**/.vite/**'] },
   ...tseslint.configs.recommended,
   ...svelte.configs['flat/recommended'],
   {
