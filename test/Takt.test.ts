@@ -45,6 +45,11 @@ describe('<Takt />', () => {
     expect(enableFiles).toHaveBeenCalledWith(['pdf', 'zip'])
   })
 
+  it('files=true enables file tracking with no extension list (default set)', () => {
+    render(Takt, { props: { domain: 'exemple.fr', files: true } })
+    expect(enableFiles).toHaveBeenCalledWith(undefined)
+  })
+
   it('disposes every enabled feature on unmount', () => {
     const spaDispose = vi.fn()
     const outboundDispose = vi.fn()
