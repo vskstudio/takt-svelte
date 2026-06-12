@@ -1,5 +1,11 @@
 # @vskstudio/takt-svelte
 
+## 0.2.2
+
+### Patch Changes
+
+- TSDoc on the public API (`<Takt />` props, `taktEvent` action, `TaktEventParams`) for IDE hover, plus package metadata (`author`, `engines.node`, top-level `types`, `unpkg`/`jsdelivr` for the custom-element bundle). No runtime change.
+
 ## 0.2.1
 
 ### Patch Changes

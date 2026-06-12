@@ -2,13 +2,20 @@ import { track } from '@vskstudio/takt-core'
 import type { TrackOptions } from '@vskstudio/takt-core'
 import type { ActionReturn } from 'svelte/action'
 
-// Derives props/revenue from core's TrackOptions so the wire shape stays in sync.
+/**
+ * Parameters for the {@link taktEvent} action. Extends core's `TrackOptions`
+ * (`props`, `revenue`) so the wire shape stays in sync, plus the event `name`.
+ */
 export interface TaktEventParams extends TrackOptions {
+  /** The custom event name to track on click. */
   name: string
 }
 
-// Svelte action: tracks a custom event on click. Reactive — updating the
-// parameter changes the tracked name/props/revenue; cleaned up on destroy.
+/**
+ * Svelte action for declarative click tracking: `use:taktEvent={{ name }}`.
+ * Reactive — updating the parameter changes the tracked name/props/revenue, and
+ * the listener is removed on destroy.
+ */
 export function taktEvent(
   node: HTMLElement,
   params: TaktEventParams,

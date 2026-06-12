@@ -1,9 +1,13 @@
 {
   "name": "@vskstudio/takt-svelte",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Idiomatic Svelte wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
+  "author": "VSK Studio",
   "type": "module",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/element/index.js",
+  "jsdelivr": "./dist/element/index.js",
   "sideEffects": [
     "./dist/element/index.js"
   ],
@@ -44,6 +48,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "build": "pnpm build:lib && pnpm build:element",
     "build:lib": "svelte-package --input src/lib --output dist",
