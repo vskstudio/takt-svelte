@@ -11,5 +11,5 @@
     "resolveJsonModule": true,
     "verbatimModuleSyntax": true
   },
-  "include": ["src", "test", "*.config.ts"]
+  "include": ["src", "test", "e2e/*.spec.ts", "*.config.ts"]
 }
