@@ -1,5 +1,15 @@
 # @vskstudio/takt-svelte
 
+## 0.2.0
+
+### Minor Changes
+
+- Add `revenue` support to the `taktEvent` action and migrate components to Svelte 5 runes.
+
+  - `taktEvent` now forwards an optional `revenue: { amount, currency }` alongside `props`.
+  - `<Takt />` and `<TaktAnalytics>` use `$props()` instead of `export let`.
+  - Peer dependency is now `svelte@^5.19.0` (runes; the custom-element compiler is broken below 5.19). CI builds against the floor and the latest release.
+
 ## 0.1.0
 
 ### Minor Changes
