@@ -1,6 +1,6 @@
 {
   "name": "@vskstudio/takt-svelte",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Idiomatic Svelte wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
   "author": "VSK Studio",
@@ -18,13 +18,13 @@
     "sveltekit",
     "takt"
   ],
-  "homepage": "https://github.com/uyangx/takt-svelte#readme",
+  "homepage": "https://github.com/vskstudio/takt-svelte#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/uyangx/takt-svelte.git"
+    "url": "git+https://github.com/vskstudio/takt-svelte.git"
   },
   "bugs": {
-    "url": "https://github.com/uyangx/takt-svelte/issues"
+    "url": "https://github.com/vskstudio/takt-svelte/issues"
   },
   "publishConfig": {
     "access": "public"
