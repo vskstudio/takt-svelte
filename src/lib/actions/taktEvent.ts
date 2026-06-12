@@ -1,10 +1,10 @@
 import { track } from '@vskstudio/takt-core'
+import type { TrackOptions } from '@vskstudio/takt-core'
 import type { ActionReturn } from 'svelte/action'
 
-export interface TaktEventParams {
+// Derives props/revenue from core's TrackOptions so the wire shape stays in sync.
+export interface TaktEventParams extends TrackOptions {
   name: string
-  props?: Record<string, string>
-  revenue?: { amount: string; currency: string }
 }
 
 // Svelte action: tracks a custom event on click. Reactive — updating the
@@ -15,7 +15,7 @@ export function taktEvent(
 ): ActionReturn<TaktEventParams> & { update(next: TaktEventParams): void; destroy(): void } {
   let current = params
   const handler = (): void => {
-    const opts: { props?: Record<string, string>; revenue?: { amount: string; currency: string } } = {}
+    const opts: TrackOptions = {}
     if (current.props) opts.props = current.props
     if (current.revenue) opts.revenue = current.revenue
     track(current.name, Object.keys(opts).length ? opts : undefined)
