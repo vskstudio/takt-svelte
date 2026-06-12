@@ -30,7 +30,6 @@ describe('taktEvent action', () => {
     taktEvent(node, { name: 'Purchase', revenue: { amount: '29.00', currency: 'EUR' } })
     node.click()
     expect(track).toHaveBeenCalledWith('Purchase', {
-      props: undefined,
       revenue: { amount: '29.00', currency: 'EUR' },
     })
   })

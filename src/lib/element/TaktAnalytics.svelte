@@ -38,8 +38,7 @@
     excludeLocalhost = true,
   }: Props = $props()
 
-  const truthy = (v: boolean | string | number) =>
-    v !== false && v !== 'false' && v !== 0 && v !== '0'
+  const truthy = (v: boolean | string) => v !== false && v !== 'false' && v !== '0'
 
   onMount(() => {
     const takt = createTakt({

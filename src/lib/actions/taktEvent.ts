@@ -15,11 +15,10 @@ export function taktEvent(
 ): ActionReturn<TaktEventParams> & { update(next: TaktEventParams): void; destroy(): void } {
   let current = params
   const handler = (): void => {
-    const opts =
-      current.props || current.revenue
-        ? { props: current.props, revenue: current.revenue }
-        : undefined
-    track(current.name, opts)
+    const opts: { props?: Record<string, string>; revenue?: { amount: string; currency: string } } = {}
+    if (current.props) opts.props = current.props
+    if (current.revenue) opts.revenue = current.revenue
+    track(current.name, Object.keys(opts).length ? opts : undefined)
   }
   node.addEventListener('click', handler)
   return {
