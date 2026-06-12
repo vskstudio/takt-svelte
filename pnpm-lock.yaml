@@ -1,7 +1,7 @@
 lockfileVersion: '9.0'
 
 settings:
-  autoInstallPeers: false
+  autoInstallPeers: true
   excludeLinksFromLockfile: false
 
 importers:
@@ -24,8 +24,8 @@ importers:
         specifier: ^5.2.0
         version: 5.3.1(svelte@5.56.3(@typescript-eslint/types@8.61.0))(vite@5.4.21(@types/node@12.20.55))(vitest@2.1.9(@types/node@12.20.55)(jsdom@25.0.1))
       '@vskstudio/takt-core':
-        specifier: ^0.1.1
-        version: 0.1.1
+        specifier: ^0.2.0
+        version: 0.2.0
       eslint:
         specifier: ^9.0.0
         version: 9.39.4(jiti@2.7.0)
@@ -36,7 +36,7 @@ importers:
         specifier: ^11.1.6
         version: 11.2.0
       svelte:
-        specifier: ^5.0.0
+        specifier: ^5.56.3
         version: 5.56.3(@typescript-eslint/types@8.61.0)
       svelte-check:
         specifier: ^4.0.0
@@ -928,8 +928,8 @@ packages:
   '@volar/typescript@2.4.28':
     resolution: {integrity: sha512-Ja6yvWrbis2QtN4ClAKreeUZPVYMARDYZl9LMEv1iQ1QdepB6wn0jTRxA9MftYmYa4DQ4k/DaSZpFPUfxl8giw==}
 
-  '@vskstudio/takt-core@0.1.1':
-    resolution: {integrity: sha512-Kx2VME48Pnv493KllnuIq1PuB7uCV6rlBhC7kK3z8/7ju6tiby+/lalQSnSP6Xb055oQhu3DbEPhq1fR6X2nZw==}
+  '@vskstudio/takt-core@0.2.0':
+    resolution: {integrity: sha512-DfEfmwPuM2DGlTYm8uEcrW7MG06PYUtSHt8Uf2bDEHIPJKrVlM+y6lakwpJPsnuVPVXi3N6H4jcoWyG6KJ9aYg==}
 
   '@vue/compiler-core@3.5.38':
     resolution: {integrity: sha512-s99aGxWYig9ErHbct27KXEGhrBYlRI6c4MwAgXErOAbX9xiW37/uMa+XUDO69zLz83dng8UUZ70CTOJrLrYrEQ==}
@@ -975,6 +975,11 @@ packages:
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
 
   ajv@6.15.0:
     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
@@ -2771,7 +2776,7 @@ snapshots:
     dependencies:
       ajv: 8.18.0
       ajv-draft-04: 1.0.0(ajv@8.18.0)
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.18.0)
       fs-extra: 11.3.5
       import-lazy: 4.0.0
       jju: 1.4.0
@@ -3040,7 +3045,7 @@ snapshots:
       path-browserify: 1.0.1
       vscode-uri: 3.1.0
 
-  '@vskstudio/takt-core@0.1.1': {}
+  '@vskstudio/takt-core@0.2.0': {}
 
   '@vue/compiler-core@3.5.38':
     dependencies:
@@ -3087,8 +3092,8 @@ snapshots:
     optionalDependencies:
       ajv: 8.18.0
 
-  ajv-formats@3.0.1:
-    dependencies:
+  ajv-formats@3.0.1(ajv@8.18.0):
+    optionalDependencies:
       ajv: 8.18.0
 
   ajv@6.15.0:

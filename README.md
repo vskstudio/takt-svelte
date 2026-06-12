@@ -93,14 +93,25 @@ Wire init yourself and track declaratively:
 <button use:taktEvent={{ name: 'Signup', props: { plan: 'pro' } }}>
   S'inscrire
 </button>
+
+<button
+  use:taktEvent={{
+    name: 'Purchase',
+    props: { plan: 'pro' },
+    revenue: { amount: '29.00', currency: 'EUR' },
+  }}
+>
+  Acheter
+</button>
 ```
 
 ## Svelte version support
 
 Entries **A** (`<Takt />`, `useTakt()`) and **C** (`./actions`) ship as Svelte
-source and support `svelte@^4 || ^5`. Entry **B** (`./element`) ships as a
-pre-compiled, self-contained bundle, so it works regardless of the host's Svelte
-version (or with no Svelte at all). The test suite runs on Svelte 5.
+source built with runes and require `svelte@^5.19.0`. Entry **B** (`./element`)
+ships as a pre-compiled, self-contained bundle, so it works regardless of the
+host's Svelte version (or with no Svelte at all). CI builds against the 5.19
+floor and the latest release.
 
 ## License
 

@@ -11,6 +11,12 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Exercise the Svelte 5 support floor and the latest release.
+        svelte: ['5.19.0', 'latest']
+    name: build (svelte@${{ matrix.svelte }})
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -19,6 +25,7 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      - run: pnpm add -D svelte@${{ matrix.svelte }}
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test

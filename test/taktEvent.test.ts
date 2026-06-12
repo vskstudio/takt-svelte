@@ -25,6 +25,30 @@ describe('taktEvent action', () => {
     expect(track).toHaveBeenCalledWith('Signup', { props: { plan: 'pro' } })
   })
 
+  it('forwards revenue on click', () => {
+    const node = document.createElement('button')
+    taktEvent(node, { name: 'Purchase', revenue: { amount: '29.00', currency: 'EUR' } })
+    node.click()
+    expect(track).toHaveBeenCalledWith('Purchase', {
+      props: undefined,
+      revenue: { amount: '29.00', currency: 'EUR' },
+    })
+  })
+
+  it('forwards both props and revenue', () => {
+    const node = document.createElement('button')
+    taktEvent(node, {
+      name: 'Purchase',
+      props: { plan: 'pro' },
+      revenue: { amount: '29.00', currency: 'EUR' },
+    })
+    node.click()
+    expect(track).toHaveBeenCalledWith('Purchase', {
+      props: { plan: 'pro' },
+      revenue: { amount: '29.00', currency: 'EUR' },
+    })
+  })
+
   it('reacts to parameter updates', () => {
     const node = document.createElement('button')
     const action = taktEvent(node, { name: 'A' })
