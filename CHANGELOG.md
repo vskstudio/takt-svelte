@@ -1,5 +1,11 @@
 # @vskstudio/takt-svelte
 
+## 0.2.1
+
+### Patch Changes
+
+- Derive `TaktEventParams` from core's `TrackOptions` so the action's prop/revenue shape stays in sync with `@vskstudio/takt-core`.
+
 ## 0.2.0
 
 ### Minor Changes

@@ -1,6 +1,6 @@
 {
   "name": "@vskstudio/takt-svelte",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Idiomatic Svelte wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
   "type": "module",
