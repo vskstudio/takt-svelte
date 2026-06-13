@@ -20,4 +20,4 @@
   const src = $derived(badgeUrl(domain, { variant, glyph, lang, host }))
 </script>
 
-<img {src} alt="takt" loading="lazy" decoding="async" {...rest} />
+<img alt="takt" loading="lazy" decoding="async" {...rest} {src} />

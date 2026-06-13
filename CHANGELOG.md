@@ -1,5 +1,11 @@
 # @vskstudio/takt-svelte
 
+## 0.3.1
+
+### Patch Changes
+
+- Lock the controlled widget `src` so a consumer-passed `src` can no longer override the built URL, and add a default iframe `referrerpolicy`.
+
 ## 0.3.0
 
 ### Minor Changes

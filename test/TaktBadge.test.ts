@@ -21,4 +21,14 @@ describe('<TaktBadge />', () => {
     const { container } = render(TaktBadge, { props: { domain: 'exemple.fr', class: 'badge' } })
     expect(container.querySelector('img')!.getAttribute('class')).toBe('badge')
   })
+
+  it('does not let a consumer-passed src override the built URL', () => {
+    const { container } = render(TaktBadge, {
+      props: { domain: 'exemple.fr', src: 'https://evil.example/x.svg' } as never,
+    })
+    const img = container.querySelector('img')!
+    const url = new URL(img.src)
+    expect(url.pathname).toContain('exemple.fr/badge.svg')
+    expect(img.src).not.toContain('evil.example')
+  })
 })

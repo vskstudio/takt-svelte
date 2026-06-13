@@ -141,7 +141,8 @@ The action re-reads its parameter on every change, so a reactive `name`, `props`
 Thin wrappers over Takt's server-rendered widgets. `<TaktBadge />` is an `<img>`
 pointing at the badge SVG; `<TaktEmbed />` is an `<iframe>` for the embed page.
 Both accept `host` to target a self-hosted Takt and pass through extra
-attributes (`class`, `style`, …).
+attributes (`class`, `style`, …); the controlled `src` cannot be overridden.
+`host` must be an absolute `http(s)` URL (validated by core).
 
 ```svelte
 <script>
