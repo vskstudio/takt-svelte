@@ -136,6 +136,31 @@ The action re-reads its parameter on every change, so a reactive `name`, `props`
 | `props` | `Record<string, string>` | no | Custom properties |
 | `revenue` | `{ amount: string; currency: string }` | no | Revenue attached to the event |
 
+## Widgets
+
+Thin wrappers over Takt's server-rendered widgets. `<TaktBadge />` is an `<img>`
+pointing at the badge SVG; `<TaktEmbed />` is an `<iframe>` for the embed page.
+Both accept `host` to target a self-hosted Takt and pass through extra
+attributes (`class`, `style`, …).
+
+```svelte
+<script>
+  import { TaktBadge, TaktEmbed } from '@vskstudio/takt-svelte'
+</script>
+
+<TaktBadge domain="exemple.fr" variant="d" glyph="unplug" />
+<TaktEmbed domain="exemple.fr" theme="dark" />
+```
+
+For raw numbers, `createStats` is re-exported from core:
+
+```ts
+import { createStats } from '@vskstudio/takt-svelte'
+
+const stats = createStats({ domain: 'exemple.fr' })
+const summary = await stats.summary({ period: '7d' })
+```
+
 ## Svelte version support
 
 Entries **A** (`<Takt />`, `useTakt()`) and **C** (`./actions`) ship as Svelte
