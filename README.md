@@ -142,7 +142,13 @@ Thin wrappers over Takt's server-rendered widgets. `<TaktBadge />` is an `<img>`
 pointing at the badge SVG; `<TaktEmbed />` is an `<iframe>` for the embed page.
 Both accept `host` to target a self-hosted Takt and pass through extra
 attributes (`class`, `style`, …); the controlled `src` cannot be overridden.
-`host` must be an absolute `http(s)` URL (validated by core).
+`host` must be an absolute `http(s)` URL (validated by core, which reduces it to
+its origin, dropping any path or query). An empty `host` means same-origin.
+
+The badge's `alt` defaults to `"takt"` but is overridable. The embed `<iframe>`
+is security-hardened: it is `sandbox`ed (`allow-scripts allow-same-origin`) and
+pinned to `referrerpolicy="strict-origin-when-cross-origin"`. Both are applied
+after the pass-through attributes, so a consumer cannot weaken them.
 
 ```svelte
 <script>
