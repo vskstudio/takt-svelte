@@ -30,4 +30,4 @@
   const src = $derived(embedUrl(domain, { theme, lang, host }))
 </script>
 
-<iframe {title} {width} {height} referrerpolicy="strict-origin-when-cross-origin" loading="lazy" style="border:0" {...rest} {src}></iframe>
+<iframe {title} {width} {height} loading="lazy" style="border:0" {...rest} {src} referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin"></iframe>
