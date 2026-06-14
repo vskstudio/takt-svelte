@@ -2,7 +2,7 @@
   import { badgeUrl, type BadgeVariant, type BadgeGlyph, type WidgetLang } from '@vskstudio/takt-core'
   import type { HTMLImgAttributes } from 'svelte/elements'
 
-  interface Props extends Omit<HTMLImgAttributes, 'src' | 'alt'> {
+  interface Props extends Omit<HTMLImgAttributes, 'src'> {
     /** Site identifier the badge reports stats for. */
     domain: string
     /** Visual variant of the badge. */
