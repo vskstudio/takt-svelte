@@ -81,6 +81,7 @@ Track custom events anywhere with `useTakt()`:
 | --- | --- | --- | --- |
 | `domain` | `string` | `location.hostname` | Site id |
 | `endpoint` | `string` | `/api/event` | Ingestion URL |
+| `scriptOrigin` | `string` | – | First-party origin to derive the endpoint from (`{origin}/api/event`) — your Takt domain or a custom domain to dodge ad-blockers (endpoint wins over it) |
 | `outbound` | `boolean` | `false` | Track outbound link clicks |
 | `files` | `boolean \| string[]` | `false` | Track file downloads (optional ext list) |
 | `spa` | `boolean` | `true` | Auto pageview on client navigation |

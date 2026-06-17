@@ -63,6 +63,13 @@ describe('<takt-analytics> boot behavior', () => {
     expect(pageview).toHaveBeenCalledTimes(1)
   })
 
+  it('with script-origin attribute: scriptOrigin is forwarded to createTakt', async () => {
+    await boot({ domain: 'exemple.fr', 'script-origin': 'https://t.exemple.fr' })
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ scriptOrigin: 'https://t.exemple.fr' }),
+    )
+  })
+
   it('with outbound attribute present: enableOutbound is called', async () => {
     await boot({ domain: 'exemple.fr', outbound: '' })
     expect(enableOutbound).toHaveBeenCalledTimes(1)

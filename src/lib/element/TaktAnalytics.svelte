@@ -3,6 +3,7 @@
     props: {
       domain: { type: 'String' },
       endpoint: { type: 'String' },
+      scriptOrigin: { type: 'String', attribute: 'script-origin' },
       outbound: { type: 'Boolean' },
       files: { type: 'Boolean' },
       // String, not Boolean: an absent attribute must keep the JS default `true`.
@@ -21,6 +22,7 @@
   interface Props {
     domain?: string
     endpoint?: string
+    scriptOrigin?: string
     outbound?: boolean
     files?: boolean
     spa?: boolean | string
@@ -31,6 +33,7 @@
   let {
     domain,
     endpoint,
+    scriptOrigin,
     outbound = false,
     files = false,
     spa = true,
@@ -44,6 +47,7 @@
     const takt = createTakt({
       domain,
       endpoint,
+      scriptOrigin,
       respectDnt: truthy(respectDnt),
       excludeLocalhost: truthy(excludeLocalhost),
     })

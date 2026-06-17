@@ -8,6 +8,8 @@
     domain?: string
     /** Ingestion endpoint. Defaults to `/api/event`. */
     endpoint?: string
+    /** First-party origin to derive the endpoint from (`{origin}/api/event`). Endpoint wins over it. */
+    scriptOrigin?: string
     /** Auto-track outbound link clicks. */
     outbound?: boolean
     /** Auto-track file downloads. Pass an array to restrict to those extensions. */
@@ -23,6 +25,7 @@
   let {
     domain,
     endpoint,
+    scriptOrigin,
     outbound = false,
     files = false,
     spa = true,
@@ -33,7 +36,7 @@
   const contextStore = provideTakt()
 
   onMount(() => {
-    const takt = createTakt({ domain, endpoint, respectDnt, excludeLocalhost })
+    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost })
     const disposers: VoidFunction[] = []
     if (spa) disposers.push(takt.enableSpa())
     if (outbound) disposers.push(takt.enableOutbound())
