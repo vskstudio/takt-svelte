@@ -1,22 +1,24 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 // Mock core: createTakt returns spies so tests assert wiring, never real reqs.
-const { enableSpa, enableOutbound, enableFiles, pageview, createTakt } = vi.hoisted(() => {
+const { enableSpa, enableOutbound, enableFiles, enable404, pageview, createTakt } = vi.hoisted(() => {
   const enableSpa = vi.fn(() => vi.fn())
   const enableOutbound = vi.fn(() => vi.fn())
   const enableFiles = vi.fn(() => vi.fn())
+  const enable404 = vi.fn(() => vi.fn())
   const pageview = vi.fn()
   const instance = {
     enableSpa,
     enableOutbound,
     enableFiles,
+    enable404,
     pageview,
     track: vi.fn(),
     optOut: vi.fn(),
     optIn: vi.fn(),
   }
   const createTakt = vi.fn(() => instance)
-  return { enableSpa, enableOutbound, enableFiles, pageview, createTakt }
+  return { enableSpa, enableOutbound, enableFiles, enable404, pageview, createTakt }
 })
 vi.mock('@vskstudio/takt-core', () => ({ createTakt }))
 
@@ -60,7 +62,13 @@ describe('<takt-analytics> boot behavior', () => {
     expect(enableSpa).toHaveBeenCalledTimes(1)
     expect(enableOutbound).not.toHaveBeenCalled()
     expect(enableFiles).not.toHaveBeenCalled()
+    expect(enable404).not.toHaveBeenCalled()
     expect(pageview).toHaveBeenCalledTimes(1)
+  })
+
+  it('with track-404 attribute present: enable404 is called', async () => {
+    await boot({ domain: 'exemple.fr', 'track-404': '' })
+    expect(enable404).toHaveBeenCalledTimes(1)
   })
 
   it('with script-origin attribute: scriptOrigin is forwarded to createTakt', async () => {

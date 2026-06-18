@@ -85,6 +85,7 @@ Track custom events anywhere with `useTakt()`:
 | `outbound` | `boolean` | `false` | Track outbound link clicks |
 | `files` | `boolean \| string[]` | `false` | Track file downloads (optional ext list) |
 | `spa` | `boolean` | `true` | Auto pageview on client navigation |
+| `track404` | `boolean` | `false` | Report a `404` event on error pages (`[data-takt-404]` / `<meta name="takt:404">` marker, or a 404 HTTP status) |
 | `respectDnt` | `boolean` | `true` | Honour Do Not Track |
 | `excludeLocalhost` | `boolean` | `true` | Skip localhost / private IPs |
 

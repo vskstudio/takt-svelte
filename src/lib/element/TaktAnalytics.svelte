@@ -6,6 +6,7 @@
       scriptOrigin: { type: 'String', attribute: 'script-origin' },
       outbound: { type: 'Boolean' },
       files: { type: 'Boolean' },
+      track404: { type: 'Boolean', attribute: 'track-404' },
       // String, not Boolean: an absent attribute must keep the JS default `true`.
       // Boolean coerces absence to false, silently disabling the privacy defaults.
       spa: { type: 'String' },
@@ -25,6 +26,7 @@
     scriptOrigin?: string
     outbound?: boolean
     files?: boolean
+    track404?: boolean
     spa?: boolean | string
     respectDnt?: boolean | string
     excludeLocalhost?: boolean | string
@@ -36,6 +38,7 @@
     scriptOrigin,
     outbound = false,
     files = false,
+    track404 = false,
     spa = true,
     respectDnt = true,
     excludeLocalhost = true,
@@ -55,6 +58,7 @@
     if (truthy(spa)) disposers.push(takt.enableSpa())
     if (outbound) disposers.push(takt.enableOutbound())
     if (files) disposers.push(takt.enableFiles())
+    if (track404) disposers.push(takt.enable404())
     takt.pageview()
     return () => disposers.forEach((dispose) => dispose())
   })
