@@ -28,7 +28,7 @@ A thin, SSR-safe Svelte 5 layer over [`@vskstudio/takt-core`](https://www.npmjs.
 pnpm add @vskstudio/takt-svelte @vskstudio/takt-core
 ```
 
-`@vskstudio/takt-core` (`>=0.2.0`) and `svelte` (`^5.19.0`) are peer dependencies.
+`@vskstudio/takt-core` (`>=0.5.0`) and `svelte` (`^5.19.0`) are peer dependencies.
 
 ## Choosing a style
 
@@ -88,6 +88,12 @@ Track custom events anywhere with `useTakt()`:
 | `track404` | `boolean` | `false` | Report a `404` event on error pages (`[data-takt-404]` / `<meta name="takt:404">` marker, or a 404 HTTP status) |
 | `respectDnt` | `boolean` | `true` | Honour Do Not Track |
 | `excludeLocalhost` | `boolean` | `true` | Skip localhost / private IPs |
+| `enabled` | `boolean` | – | Master on/off switch — set to `false` to disable all tracking |
+| `sampleRate` | `number` | – | Fraction of sessions to sample (0–1) |
+| `trackQuery` | `boolean` | – | Preserve the query string in page URLs |
+| `queryParams` | `string[]` | – | Query params to preserve when `trackQuery` is false (allowlist) |
+| `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent (function prop / config only — not available as an element attribute) |
+| `tagged` | `boolean` | `false` | Call `enableTagged()` to auto-track `[data-takt-event]` elements |
 
 ## B — Web component
 
@@ -103,7 +109,15 @@ import '@vskstudio/takt-svelte/element'
 
 Importing the subpath registers `<takt-analytics>` automatically; `defineTaktElement()` is also exported for explicit, guarded registration.
 
-Attributes mirror the `<Takt />` props, with two differences: `files` is boolean-only (the element can't take an extension array — for a custom list use `<Takt />` or the actions API), and the privacy flags (`spa`, `respectDnt`, `excludeLocalhost`) default to `true` and are opted out with the explicit string value `"false"` (e.g. `spa="false"`).
+Attributes mirror the `<Takt />` props with a few differences:
+
+- `files` is boolean-only (no extension array — use `<Takt />` or the actions API for that).
+- `spa`, `respectDnt`, `excludeLocalhost`, and `enabled` default to their JS defaults and are opted out with the explicit string value `"false"` (e.g. `spa="false"`, `enabled="false"`).
+- `sample-rate` (kebab-case) accepts a numeric string: `sample-rate="0.5"`.
+- `track-query` (kebab-case) is a boolean attribute.
+- `query-params` (kebab-case) accepts a comma-separated list: `query-params="utm_source, utm_medium"`.
+- `tagged` is a boolean attribute — presence enables `[data-takt-event]` auto-tracking.
+- `scrubUrl` is not available as an element attribute (functions can't be passed as HTML attributes — use `<Takt />` or the actions API).
 
 ## C — Functional / actions
 
