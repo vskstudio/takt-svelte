@@ -120,6 +120,11 @@ describe('<takt-analytics> advanced options', () => {
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ sampleRate: 0.5 }))
   })
 
+  it('sample-rate="abc" → sampleRate NOT forwarded (engine default applies)', async () => {
+    await boot({ domain: 'exemple.fr', 'sample-rate': 'abc' })
+    expect(createTakt).not.toHaveBeenCalledWith(expect.objectContaining({ sampleRate: expect.anything() }))
+  })
+
   it('track-query attribute present → trackQuery: true forwarded to createTakt', async () => {
     await boot({ domain: 'exemple.fr', 'track-query': '' })
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ trackQuery: true }))

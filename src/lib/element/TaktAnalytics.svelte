@@ -63,7 +63,8 @@
 
   onMount(() => {
     const parsedEnabled = enabled !== undefined ? truthy(enabled) : undefined
-    const parsedSampleRate = sampleRate !== undefined ? parseFloat(sampleRate) : undefined
+    const parsed = sampleRate !== undefined ? parseFloat(sampleRate) : NaN
+    const parsedSampleRate = Number.isFinite(parsed) ? parsed : undefined
     const parsedTrackQuery = trackQuery !== undefined ? truthy(trackQuery) : undefined
     const parsedQueryParams =
       queryParams !== undefined
