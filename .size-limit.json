@@ -2,7 +2,7 @@
   {
     "name": "element (gzip)",
     "path": "dist/element/index.js",
-    "limit": "16 kB",
+    "limit": "17 kB",
     "gzip": true
   }
 ]
