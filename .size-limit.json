@@ -1,8 +1,8 @@
 [
   {
-    "name": "element (gzip)",
+    "name": "element (gzip, self-contained, plain HTMLElement)",
     "path": "dist/element/index.js",
-    "limit": "17 kB",
+    "limit": "4.5 kB",
     "gzip": true
   }
 ]
