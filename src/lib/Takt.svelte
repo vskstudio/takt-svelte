@@ -30,6 +30,8 @@
     trackQuery?: boolean
     /** Query params to preserve when `trackQuery` is false (allowlist). */
     queryParams?: string[]
+    /** Path prefixes never tracked, e.g. ['/app','/account']. Segment-bounded: '/app' matches '/app' and '/app/…' but not '/application'. */
+    exclude?: string[]
     /** Transform each URL before it is sent (dev-controlled; function prop only). */
     scrubUrl?: (url: string) => string
     /** Call `enableTagged()` to auto-track `[data-takt-event]` elements. */
@@ -50,6 +52,7 @@
     sampleRate,
     trackQuery,
     queryParams,
+    exclude,
     scrubUrl,
     tagged = false,
   }: Props = $props()
@@ -57,7 +60,7 @@
   const contextStore = provideTakt()
 
   onMount(() => {
-    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, sampleRate, trackQuery, queryParams, scrubUrl })
+    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, sampleRate, trackQuery, queryParams, exclude, scrubUrl })
     const disposers: VoidFunction[] = []
     if (spa) disposers.push(takt.enableSpa())
     if (outbound) disposers.push(takt.enableOutbound())

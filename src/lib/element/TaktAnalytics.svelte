@@ -16,6 +16,7 @@
       sampleRate: { type: 'String', attribute: 'sample-rate' },
       trackQuery: { type: 'String', attribute: 'track-query' },
       queryParams: { type: 'String', attribute: 'query-params' },
+      exclude: { type: 'String', attribute: 'exclude' },
       tagged: { type: 'Boolean' },
     },
   }}
@@ -39,6 +40,7 @@
     sampleRate?: string
     trackQuery?: boolean | string
     queryParams?: string
+    exclude?: string
     tagged?: boolean
   }
 
@@ -56,6 +58,7 @@
     sampleRate,
     trackQuery,
     queryParams,
+    exclude,
     tagged = false,
   }: Props = $props()
 
@@ -70,6 +73,8 @@
       queryParams !== undefined
         ? queryParams.split(',').map((s) => s.trim()).filter(Boolean)
         : undefined
+    const parsedExclude =
+      exclude !== undefined ? exclude.split(',').map((s) => s.trim()).filter(Boolean) : undefined
 
     const takt = createTakt({
       domain,
@@ -81,6 +86,7 @@
       sampleRate: parsedSampleRate,
       trackQuery: parsedTrackQuery,
       queryParams: parsedQueryParams,
+      exclude: parsedExclude,
     })
     const disposers: VoidFunction[] = []
     if (truthy(spa)) disposers.push(takt.enableSpa())
