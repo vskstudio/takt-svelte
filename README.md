@@ -92,6 +92,7 @@ Track custom events anywhere with `useTakt()`:
 | `sampleRate` | `number` | – | Fraction of sessions to sample (0–1) |
 | `trackQuery` | `boolean` | – | Preserve the query string in page URLs |
 | `queryParams` | `string[]` | – | Query params to preserve when `trackQuery` is false (allowlist) |
+| `exclude` | `string[]` | – | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time) |
 | `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent (function prop / config only — not available as an element attribute) |
 | `tagged` | `boolean` | `false` | Call `enableTagged()` to auto-track `[data-takt-event]` elements |
 
@@ -116,6 +117,7 @@ Attributes mirror the `<Takt />` props with a few differences:
 - `sample-rate` (kebab-case) accepts a numeric string: `sample-rate="0.5"`.
 - `track-query` (kebab-case) is a boolean attribute.
 - `query-params` (kebab-case) accepts a comma-separated list: `query-params="utm_source, utm_medium"`.
+- `exclude` accepts a comma-separated list of path prefixes: `exclude="/app,/account"`.
 - `tagged` is a boolean attribute — presence enables `[data-takt-event]` auto-tracking.
 - `scrubUrl` is not available as an element attribute (functions can't be passed as HTML attributes — use `<Takt />` or the actions API).
 
