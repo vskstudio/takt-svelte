@@ -31,7 +31,7 @@ A thin, SSR-safe Svelte 5 layer over [`@vskstudio/takt-core`](https://www.npmjs.
 pnpm add @vskstudio/takt-svelte @vskstudio/takt-core
 ```
 
-`@vskstudio/takt-core` (`>=0.5.0`) and `svelte` (`^5.19.0`) are peer dependencies.
+`@vskstudio/takt-core` (`>=0.8.1`) and `svelte` (`^5.19.0`) are peer dependencies.
 
 ## Choosing a style
 
@@ -58,16 +58,15 @@ Track custom events anywhere with `useTakt()`:
 ```svelte
 <script>
   import { useTakt } from '@vskstudio/takt-svelte'
-  const takt = useTakt()
 </script>
 
-<button onclick={() => takt.track('Signup', { props: { plan: 'pro' } })}>
+<button onclick={() => useTakt().track('Signup', { props: { plan: 'pro' } })}>
   S'inscrire
 </button>
 
 <button
   onclick={() =>
-    takt.track('Purchase', {
+    useTakt().track('Purchase', {
       props: { plan: 'pro' },
       revenue: { amount: '29.00', currency: 'EUR' },
     })}
@@ -76,14 +75,23 @@ Track custom events anywhere with `useTakt()`:
 </button>
 ```
 
-`useTakt()` never throws — before `<Takt />` mounts it returns a no-op instance.
+`useTakt()` resolves the instance at call time, so call it where you track — a
+`const takt = useTakt()` in a component script runs before `<Takt />`'s
+`onMount` and would capture the no-op for the lifetime of the component.
+
+It never throws either: with no instance yet (SSR pass, early call) it returns a
+no-op covering the full core surface — and warns once in the console, so the
+misuse is not silent.
 
 ### `<Takt />` props
+
+All 16 props are optional. They map 1:1 onto the core options, `debug` aside —
+it is the only core option the component does not expose.
 
 | Prop | Type | Default | Effect |
 | --- | --- | --- | --- |
 | `domain` | `string` | `location.hostname` | Site id |
-| `endpoint` | `string` | `/api/event` | Ingestion URL |
+| `endpoint` | `string` | `https://taktlytics.com/api/event` | Ingestion URL. Pass `/api/event` for a same-origin first-party proxy |
 | `scriptOrigin` | `string` | – | First-party origin to derive the endpoint from (`{origin}/api/event`) — a custom domain you proxy through to dodge ad-blockers (endpoint wins over it) |
 | `outbound` | `boolean` | `false` | Track outbound link clicks |
 | `files` | `boolean \| string[]` | `false` | Track file downloads (optional ext list) |
@@ -91,9 +99,9 @@ Track custom events anywhere with `useTakt()`:
 | `track404` | `boolean` | `false` | Report a `404` event on error pages (`[data-takt-404]` / `<meta name="takt:404">` marker, or a 404 HTTP status) |
 | `respectDnt` | `boolean` | `true` | Honour Do Not Track |
 | `excludeLocalhost` | `boolean` | `true` | Skip localhost / private IPs |
-| `enabled` | `boolean` | – | Master on/off switch — set to `false` to disable all tracking |
-| `sampleRate` | `number` | – | Fraction of sessions to sample (0–1) |
-| `trackQuery` | `boolean` | – | Preserve the query string in page URLs |
+| `enabled` | `boolean` | `true` | Master on/off switch — set to `false` to disable all tracking |
+| `sampleRate` | `number` | `1` | Fraction of sessions to sample (0–1) |
+| `trackQuery` | `boolean` | `false` | Preserve the query string in page URLs (off = query and hash are stripped) |
 | `queryParams` | `string[]` | – | Query params to preserve when `trackQuery` is false (allowlist) |
 | `exclude` | `string[]` | – | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time) |
 | `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent (function prop / config only — not available as an element attribute) |
@@ -113,25 +121,49 @@ import '@vskstudio/takt-svelte/element'
 
 Importing the subpath registers `<takt-analytics>` automatically; `defineTaktElement()` is also exported for explicit, guarded registration.
 
-Attributes mirror the `<Takt />` props with a few differences:
+Attributes mirror the `<Takt />` props, kebab-cased, and fall into three kinds:
 
-- `files` is boolean-only (no extension array — use `<Takt />` or the actions API for that).
-- `spa`, `respectDnt`, `excludeLocalhost`, and `enabled` default to their JS defaults and are opted out with the explicit string value `"false"` (e.g. `spa="false"`, `enabled="false"`).
-- `sample-rate` (kebab-case) accepts a numeric string: `sample-rate="0.5"`.
-- `track-query` (kebab-case) is a boolean attribute.
-- `query-params` (kebab-case) accepts a comma-separated list: `query-params="utm_source, utm_medium"`.
-- `exclude` accepts a comma-separated list of path prefixes: `exclude="/app,/account"`.
-- `tagged` is a boolean attribute — presence enables `[data-takt-event]` auto-tracking.
-- `scrubUrl` is not available as an element attribute (functions can't be passed as HTML attributes — use `<Takt />` or the actions API).
+- **presence flags** — off unless the attribute is there at all (any value, including empty);
+- **default-on flags** — on unless you write the explicit value `"false"` or `"0"`;
+- **value attributes** — read as a string (numbers and comma-separated lists included).
+
+| Attribute | Prop | Kind | Notes |
+| --- | --- | --- | --- |
+| `domain` | `domain` | value | |
+| `endpoint` | `endpoint` | value | Defaults to `https://taktlytics.com/api/event` |
+| `script-origin` | `scriptOrigin` | value | |
+| `sample-rate` | `sampleRate` | value | Numeric string (`sample-rate="0.5"`); ignored if not a finite number |
+| `query-params` | `queryParams` | value | Comma-separated, spaces trimmed: `query-params="utm_source, utm_medium"` |
+| `exclude` | `exclude` | value | Comma-separated path prefixes: `exclude="/app,/account"` |
+| `outbound` | `outbound` | presence | |
+| `files` | `files` | presence | Boolean-only — no extension list (use `<Takt />` or the actions API for that) |
+| `track-404` | `track404` | presence | |
+| `tagged` | `tagged` | presence | Enables `[data-takt-event]` auto-tracking |
+| `track-query` | `trackQuery` | presence | Read only when present; `track-query="false"` forces it back off |
+| `enabled` | `enabled` | presence | Read only when present; `enabled="false"` disables all tracking |
+| `spa` | `spa` | default-on | `spa="false"` opts out |
+| `respect-dnt` | `respectDnt` | default-on | `respectdnt` is also accepted |
+| `exclude-localhost` | `excludeLocalhost` | default-on | `excludelocalhost` is also accepted |
+| – | `scrubUrl` | – | Not available as an attribute (functions can't be passed in HTML — use `<Takt />` or the actions API) |
+
+HTML attribute names are case-insensitive, so `respectDnt="false"` written in
+markup reaches the element as `respectdnt` and works too.
 
 ## C — Functional / actions
 
-Wire init yourself and track declaratively:
+Wire init yourself and track declaratively. `init()` is browser-only — it
+patches `history` for SPA tracking as soon as it runs — so call it from
+`onMount`; at the top level of a component script it throws
+`ReferenceError: history is not defined` during server rendering.
 
 ```svelte
 <script>
+  import { onMount } from 'svelte'
   import { init, taktEvent } from '@vskstudio/takt-svelte/actions'
-  init({ domain: 'exemple.fr' })
+
+  onMount(() => {
+    init({ domain: 'exemple.fr' })
+  })
 </script>
 
 <button use:taktEvent={{ name: 'Signup', props: { plan: 'pro' } }}>
@@ -151,6 +183,9 @@ Wire init yourself and track declaratively:
 
 The action re-reads its parameter on every change, so a reactive `name`, `props`, or `revenue` is always tracked with its latest value; the click listener is removed automatically when the node is destroyed.
 
+The subpath also re-exports core's default-instance functions — `init`, `track`,
+`pageview`, `optOut`, `optIn` — so a single import covers the whole functional API.
+
 | `taktEvent` parameter | Type | Required | Effect |
 | --- | --- | --- | --- |
 | `name` | `string` | yes | Event name sent on click |
@@ -164,7 +199,8 @@ pointing at the badge SVG; `<TaktEmbed />` is an `<iframe>` for the embed page.
 Both accept `host` to target a self-hosted Takt and pass through extra
 attributes (`class`, `style`, …); the controlled `src` cannot be overridden.
 `host` must be an absolute `http(s)` URL (validated by core, which reduces it to
-its origin, dropping any path or query). An empty `host` means same-origin.
+its origin, dropping any path or query). Omitted or empty, it falls back to the
+hosted Takt origin (`https://taktlytics.com`).
 
 The badge's `alt` defaults to `"takt"` but is overridable. The embed `<iframe>`
 is security-hardened: it is `sandbox`ed (`allow-scripts allow-same-origin`) and
@@ -193,9 +229,9 @@ const summary = await stats.summary({ period: '7d' })
 
 Entries **A** (`<Takt />`, `useTakt()`) and **C** (`./actions`) ship as Svelte
 source built with runes and require `svelte@^5.19.0`. Entry **B** (`./element`)
-ships as a pre-compiled, self-contained bundle, so it works regardless of the
-host's Svelte version (or with no Svelte at all). CI builds against the 5.19
-floor and the latest release.
+is a plain custom element shipped as a pre-compiled, self-contained bundle with
+no Svelte runtime, so it works regardless of the host's Svelte version (or with
+no Svelte at all). CI builds against the 5.19 floor and the latest release.
 
 ## License
 
