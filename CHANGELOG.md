@@ -1,5 +1,24 @@
 # @vskstudio/takt-svelte
 
+## 0.6.3
+
+### Patch Changes
+
+- b865658: Fix the no-op instance returned by `useTakt()` before `<Takt />` has mounted (SSR
+  pass or early call): it was missing `enableTagged`, so calling it threw a
+  `TypeError` instead of doing nothing — the exact opposite of a no-op. The stub is
+  now typed against `keyof` the core instance, so any method added to the core
+  breaks the build here instead of slipping through.
+- 77b3a14: Realign the README with the code: default `endpoint` is the hosted
+  `https://taktlytics.com/api/event` (pass `/api/event` for a same-origin
+  first-party proxy), peer range is takt-core `>=0.8.1`, the `<takt-analytics>`
+  attributes are documented as they are actually read (`script-origin`,
+  `track-404`, `respect-dnt`, `exclude-localhost`; presence flags vs default-on
+  flags vs value attributes), `useTakt()` warns once and resolves at call time,
+  `init()` from `/actions` must run in `onMount` (it patches `history` on call),
+  and an empty widget `host` falls back to the hosted origin rather than
+  same-origin.
+
 ## 0.6.2
 
 ### Patch Changes
