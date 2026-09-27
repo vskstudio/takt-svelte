@@ -18,6 +18,7 @@ const { enableSpa, enableOutbound, enableFiles, enable404, enableTagged, pagevie
     track: vi.fn(),
     optOut: vi.fn(),
     optIn: vi.fn(),
+    isOptedOut: vi.fn(() => false),
   }
   const createTakt = vi.fn(() => instance)
   return { enableSpa, enableOutbound, enableFiles, enable404, enableTagged, pageview, createTakt }
@@ -140,6 +141,21 @@ describe('<takt-analytics> advanced options', () => {
   it('enabled="false" → enabled: false forwarded to createTakt', async () => {
     await boot({ domain: 'exemple.fr', enabled: 'false' })
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+  })
+
+  it('debug attribute present → debug: true forwarded; debug="false" → false; absent → not forwarded', async () => {
+    await boot({ domain: 'exemple.fr', debug: '' })
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
+
+    vi.clearAllMocks()
+    document.body.innerHTML = ''
+    await boot({ domain: 'exemple.fr', debug: 'false' })
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: false }))
+
+    vi.clearAllMocks()
+    document.body.innerHTML = ''
+    await boot({ domain: 'exemple.fr' })
+    expect(createTakt).not.toHaveBeenCalledWith(expect.objectContaining({ debug: expect.anything() }))
   })
 
   it('tagged attribute present → enableTagged() called; absent → not called', async () => {

@@ -31,7 +31,7 @@ A thin, SSR-safe Svelte 5 layer over [`@vskstudio/takt-core`](https://www.npmjs.
 pnpm add @vskstudio/takt-svelte @vskstudio/takt-core
 ```
 
-`@vskstudio/takt-core` (`>=0.8.1`) and `svelte` (`^5.19.0`) are peer dependencies.
+`@vskstudio/takt-core` (`>=0.9.0`) and `svelte` (`^5.19.0`) are peer dependencies.
 
 ## Choosing a style
 
@@ -83,10 +83,44 @@ It never throws either: with no instance yet (SSR pass, early call) it returns a
 no-op covering the full core surface — and warns once in the console, so the
 misuse is not silent.
 
+Consent calls on that no-op are real, not inert: `optOut()`, `optIn()` and
+`isOptedOut()` delegate to the core module functions, which read and write the
+`takt_ignore` localStorage flag directly. A cookie banner can therefore record
+the visitor's choice before `<Takt />` has mounted, and the instance created
+later honours it.
+
+### Consent
+
+`optOut`, `optIn` and `isOptedOut` are also exported from the package root (and
+from `./actions`). They need no instance:
+
+```svelte
+<script>
+  import { optOut, optIn, isOptedOut } from '@vskstudio/takt-svelte'
+
+  let optedOut = $state(isOptedOut())
+</script>
+
+<label>
+  <input
+    type="checkbox"
+    checked={!optedOut}
+    onchange={(e) => {
+      if (e.currentTarget.checked) optIn()
+      else optOut()
+      optedOut = isOptedOut()
+    }}
+  />
+  Mesure d'audience
+</label>
+```
+
+`isOptedOut()` reads localStorage, so call it in the browser (in `onMount` or an
+event handler) when the component is server-rendered.
+
 ### `<Takt />` props
 
-All 16 props are optional. They map 1:1 onto the core options, `debug` aside —
-it is the only core option the component does not expose.
+All 17 props are optional. They map 1:1 onto the core options.
 
 | Prop | Type | Default | Effect |
 | --- | --- | --- | --- |
@@ -100,11 +134,12 @@ it is the only core option the component does not expose.
 | `respectDnt` | `boolean` | `true` | Honour Do Not Track |
 | `excludeLocalhost` | `boolean` | `true` | Skip localhost / private IPs |
 | `enabled` | `boolean` | `true` | Master on/off switch — set to `false` to disable all tracking |
+| `debug` | `boolean` | `false` | Log each payload to the console (`console.debug`) before sending it |
 | `sampleRate` | `number` | `1` | Fraction of sessions to sample (0–1) |
 | `trackQuery` | `boolean` | `false` | Preserve the query string in page URLs (off = query and hash are stripped) |
 | `queryParams` | `string[]` | – | Query params to preserve when `trackQuery` is false (allowlist) |
 | `exclude` | `string[]` | – | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time) |
-| `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent (function prop / config only — not available as an element attribute) |
+| `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent: the page URL and the `props.url` of outbound clicks and file downloads. Function prop only, not available as an element attribute |
 | `tagged` | `boolean` | `false` | Call `enableTagged()` to auto-track `[data-takt-event]` elements |
 
 ## B — Web component
@@ -141,6 +176,7 @@ Attributes mirror the `<Takt />` props, kebab-cased, and fall into three kinds:
 | `tagged` | `tagged` | presence | Enables `[data-takt-event]` auto-tracking |
 | `track-query` | `trackQuery` | presence | Read only when present; `track-query="false"` forces it back off |
 | `enabled` | `enabled` | presence | Read only when present; `enabled="false"` disables all tracking |
+| `debug` | `debug` | presence | Read only when present; `debug="false"` forces it back off |
 | `spa` | `spa` | default-on | `spa="false"` opts out |
 | `respect-dnt` | `respectDnt` | default-on | `respectdnt` is also accepted |
 | `exclude-localhost` | `excludeLocalhost` | default-on | `excludelocalhost` is also accepted |
@@ -183,8 +219,10 @@ patches `history` for SPA tracking as soon as it runs — so call it from
 
 The action re-reads its parameter on every change, so a reactive `name`, `props`, or `revenue` is always tracked with its latest value; the click listener is removed automatically when the node is destroyed.
 
-The subpath also re-exports core's default-instance functions — `init`, `track`,
-`pageview`, `optOut`, `optIn` — so a single import covers the whole functional API.
+The subpath also re-exports core's default-instance functions (`init`, `track`,
+`pageview`) and its consent functions (`optOut`, `optIn`, `isOptedOut`), so a
+single import covers the whole functional API. The consent functions work with
+or without `init()`.
 
 | `taktEvent` parameter | Type | Required | Effect |
 | --- | --- | --- | --- |

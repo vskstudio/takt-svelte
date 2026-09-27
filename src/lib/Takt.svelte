@@ -24,6 +24,7 @@
     excludeLocalhost?: boolean
     /** Master on/off switch — set to `false` to disable all tracking. */
     enabled?: boolean
+    debug?: boolean
     /** Fraction of sessions to sample (0–1). */
     sampleRate?: number
     /** Preserve the query string in page URLs. */
@@ -49,6 +50,7 @@
     respectDnt = true,
     excludeLocalhost = true,
     enabled,
+    debug,
     sampleRate,
     trackQuery,
     queryParams,
@@ -60,7 +62,7 @@
   const contextStore = provideTakt()
 
   onMount(() => {
-    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, sampleRate, trackQuery, queryParams, exclude, scrubUrl })
+    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, debug, sampleRate, trackQuery, queryParams, exclude, scrubUrl })
     const disposers: VoidFunction[] = []
     if (spa) disposers.push(takt.enableSpa())
     if (outbound) disposers.push(takt.enableOutbound())
