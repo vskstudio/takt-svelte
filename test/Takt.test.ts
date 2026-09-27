@@ -53,6 +53,27 @@ describe('<Takt />', () => {
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
   })
 
+  it('forwards redactRoutes, routeTemplates and routeTemplate to createTakt', () => {
+    const routeTemplate = () => '/blog/[slug]'
+    render(Takt, { props: { redactRoutes: ['/verify/[token]'], routeTemplates: true, routeTemplate } })
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ redactRoutes: ['/verify/[token]'], routeTemplates: true, routeTemplate }),
+    )
+  })
+
+  it('leaves route redaction options undefined when not set', () => {
+    render(Takt, { props: { domain: 'exemple.fr' } })
+    expect(createTakt).not.toHaveBeenCalledWith(
+      expect.objectContaining({ redactRoutes: expect.anything() }),
+    )
+    expect(createTakt).not.toHaveBeenCalledWith(
+      expect.objectContaining({ routeTemplates: expect.anything() }),
+    )
+    expect(createTakt).not.toHaveBeenCalledWith(
+      expect.objectContaining({ routeTemplate: expect.anything() }),
+    )
+  })
+
   it('enables only the toggled features and passes a file extension list', () => {
     render(Takt, { props: { spa: false, outbound: true, files: ['pdf', 'zip'] } })
     expect(enableSpa).not.toHaveBeenCalled()
