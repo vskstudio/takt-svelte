@@ -118,9 +118,44 @@ from `./actions`). They need no instance:
 `isOptedOut()` reads localStorage, so call it in the browser (in `onMount` or an
 event handler) when the component is server-rendered.
 
+### Route redaction
+
+The query string is stripped by default, but path segments are sent as they
+are: `/verify/abc123` leaks the token. `redactRoutes` lists the sensitive
+routes, and a matching path is sent as its pattern. Every other path keeps its
+real value, so per-page stats stay intact.
+
+```svelte
+<Takt domain="exemple.fr" redactRoutes={['/verify/[token]', '/reset/[code]', '/invoices/[id].pdf']} />
+```
+
+Patterns accept SvelteKit syntax (`[param]`, `[[optional]]`, `[...rest]`,
+`(group)`) as well as `:param`, `:param?`, `*` and `**`. The rule covers the
+page URL, same-origin referrers, file download destinations and 404 paths.
+
+For a fully private app, `routeTemplates` sends every page as its route
+template: `/blog/hello` becomes `/blog/[slug]`. The package does not depend on
+SvelteKit, so you pass the resolver yourself. In SvelteKit, read it from
+`page.route.id`:
+
+```svelte
+<script>
+  import { page } from '$app/state'
+  import { Takt } from '@vskstudio/takt-svelte'
+</script>
+
+<Takt domain="exemple.fr" routeTemplates routeTemplate={() => page.route.id} />
+```
+
+Route groups such as `(marketing)` in `page.route.id` are removed by core, so
+`/(marketing)/blog/[slug]` is sent as `/blog/[slug]`. When the resolver returns
+`null` (no matched route), `redactRoutes` still applies and the real path is
+sent otherwise. On a public site this mode merges every article into one row,
+so prefer `redactRoutes` there.
+
 ### `<Takt />` props
 
-All 17 props are optional. They map 1:1 onto the core options.
+All 20 props are optional. They map 1:1 onto the core options.
 
 | Prop | Type | Default | Effect |
 | --- | --- | --- | --- |
@@ -140,6 +175,9 @@ All 17 props are optional. They map 1:1 onto the core options.
 | `queryParams` | `string[]` | – | Query params to preserve when `trackQuery` is false (allowlist) |
 | `exclude` | `string[]` | – | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time) |
 | `scrubUrl` | `(url: string) => string` | – | Transform each URL before it is sent: the page URL and the `props.url` of outbound clicks and file downloads. Function prop only, not available as an element attribute |
+| `redactRoutes` | `string[]` | – | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/[token]']`. See [Route redaction](#route-redaction) |
+| `routeTemplates` | `boolean` | `false` | Send every page as its route template (needs `routeTemplate`) |
+| `routeTemplate` | `() => string \| null \| undefined` | – | Returns the current route template, e.g. `() => page.route.id` in SvelteKit. Used when `routeTemplates` is on |
 | `tagged` | `boolean` | `false` | Call `enableTagged()` to auto-track `[data-takt-event]` elements |
 
 ## B — Web component
@@ -170,6 +208,7 @@ Attributes mirror the `<Takt />` props, kebab-cased, and fall into three kinds:
 | `sample-rate` | `sampleRate` | value | Numeric string (`sample-rate="0.5"`); ignored if not a finite number |
 | `query-params` | `queryParams` | value | Comma-separated, spaces trimmed: `query-params="utm_source, utm_medium"` |
 | `exclude` | `exclude` | value | Comma-separated path prefixes: `exclude="/app,/account"` |
+| `redact-routes` | `redactRoutes` | value | Comma-separated route patterns: `redact-routes="/verify/[token],/reset/:code"` |
 | `outbound` | `outbound` | presence | |
 | `files` | `files` | presence | Boolean-only — no extension list (use `<Takt />` or the actions API for that) |
 | `track-404` | `track404` | presence | |
@@ -181,6 +220,7 @@ Attributes mirror the `<Takt />` props, kebab-cased, and fall into three kinds:
 | `respect-dnt` | `respectDnt` | default-on | `respectdnt` is also accepted |
 | `exclude-localhost` | `excludeLocalhost` | default-on | `excludelocalhost` is also accepted |
 | – | `scrubUrl` | – | Not available as an attribute (functions can't be passed in HTML — use `<Takt />` or the actions API) |
+| – | `routeTemplates`, `routeTemplate` | – | Not available as attributes: the element has no router (use `<Takt />` or `init()`) |
 
 HTML attribute names are case-insensitive, so `respectDnt="false"` written in
 markup reaches the element as `respectdnt` and works too.
@@ -223,6 +263,9 @@ The subpath also re-exports core's default-instance functions (`init`, `track`,
 `pageview`) and its consent functions (`optOut`, `optIn`, `isOptedOut`), so a
 single import covers the whole functional API. The consent functions work with
 or without `init()`.
+
+`init()` takes the core options directly, so `redactRoutes`, `routeTemplates`
+and `routeTemplate` work there as on `<Takt />`.
 
 | `taktEvent` parameter | Type | Required | Effect |
 | --- | --- | --- | --- |
