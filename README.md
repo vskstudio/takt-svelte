@@ -7,7 +7,7 @@
 
 > 📚 **Documentation** — [taktlytics.com/docs/wrappers/svelte](https://taktlytics.com/docs/wrappers/svelte)
 
-**Idiomatic [Svelte](https://svelte.dev) wrapper for [Takt](https://github.com/vskstudio/takt-core) privacy-friendly analytics.**
+**Idiomatic [Svelte](https://svelte.dev) wrapper for [Takt](https://github.com/taktlytics/takt-core) privacy-friendly analytics.**
 
 [![npm version](https://img.shields.io/npm/v/@vskstudio/takt-svelte?color=ff3e00&logo=npm)](https://www.npmjs.com/package/@vskstudio/takt-svelte)
 [![Svelte](https://img.shields.io/badge/Svelte-5.19%2B-ff3e00?logo=svelte&logoColor=white)](https://svelte.dev)

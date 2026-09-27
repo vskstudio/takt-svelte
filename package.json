@@ -18,13 +18,13 @@
     "sveltekit",
     "takt"
   ],
-  "homepage": "https://github.com/vskstudio/takt-svelte#readme",
+  "homepage": "https://github.com/taktlytics/takt-svelte#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vskstudio/takt-svelte.git"
+    "url": "git+https://github.com/taktlytics/takt-svelte.git"
   },
   "bugs": {
-    "url": "https://github.com/vskstudio/takt-svelte/issues"
+    "url": "https://github.com/taktlytics/takt-svelte/issues"
   },
   "publishConfig": {
     "access": "public"
