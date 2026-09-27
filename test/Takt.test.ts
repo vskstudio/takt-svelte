@@ -9,7 +9,7 @@ const { enableSpa, enableOutbound, enableFiles, enable404, pageview, createTakt 
   const enableFiles = vi.fn(() => vi.fn())
   const enable404 = vi.fn(() => vi.fn())
   const pageview = vi.fn()
-  const instance = { enableSpa, enableOutbound, enableFiles, enable404, pageview, track: vi.fn(), optOut: vi.fn(), optIn: vi.fn() }
+  const instance = { enableSpa, enableOutbound, enableFiles, enable404, pageview, track: vi.fn(), optOut: vi.fn(), optIn: vi.fn(), isOptedOut: vi.fn(() => false) }
   const createTakt = vi.fn(() => instance)
   return { enableSpa, enableOutbound, enableFiles, enable404, pageview, createTakt }
 })
@@ -46,6 +46,11 @@ describe('<Takt />', () => {
     expect(createTakt).toHaveBeenCalledWith(
       expect.objectContaining({ scriptOrigin: 'https://t.exemple.fr' }),
     )
+  })
+
+  it('forwards debug to createTakt', () => {
+    render(Takt, { props: { domain: 'exemple.fr', debug: true } })
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
   })
 
   it('enables only the toggled features and passes a file extension list', () => {
