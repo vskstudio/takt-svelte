@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
-import { createTakt } from '@vskstudio/takt-core'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { createTakt, isOptedOut } from '@vskstudio/takt-core'
 import { noopTakt } from '../src/lib/noop'
 
 // Surface publique réelle d'une instance du cœur, lue sur le prototype : toute
@@ -13,8 +13,21 @@ function corePublicMethods(): string[] {
   )
 }
 
+function memoryStorage(): Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> {
+  const entries = new Map<string, string>()
+  return {
+    getItem: (key) => entries.get(key) ?? null,
+    setItem: (key, value) => void entries.set(key, String(value)),
+    removeItem: (key) => void entries.delete(key),
+  }
+}
+
 describe('noopTakt', () => {
-  afterEach(() => vi.restoreAllMocks())
+  beforeEach(() => vi.stubGlobal('localStorage', memoryStorage()))
+  afterEach(() => {
+    vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+  })
 
   it('couvre toute la surface publique du cœur', () => {
     const takt = noopTakt() as unknown as Record<string, unknown>
@@ -49,6 +62,23 @@ describe('noopTakt', () => {
     expect(() => takt.pageview()).not.toThrow()
     expect(() => takt.optOut()).not.toThrow()
     expect(() => takt.optIn()).not.toThrow()
+  })
+
+  it('optOut() et optIn() écrivent le consentement du cœur avant tout montage', () => {
+    const takt = noopTakt()
+    takt.optOut()
+    expect(isOptedOut()).toBe(true)
+    expect(takt.isOptedOut()).toBe(true)
+    takt.optIn()
+    expect(isOptedOut()).toBe(false)
+    expect(takt.isOptedOut()).toBe(false)
+  })
+
+  it('isOptedOut() lit le consentement du cœur', () => {
+    localStorage.setItem('takt_ignore', '1')
+    expect(noopTakt().isOptedOut()).toBe(true)
+    localStorage.removeItem('takt_ignore')
+    expect(noopTakt().isOptedOut()).toBe(false)
   })
 
   it('avertit une seule fois en console', async () => {
