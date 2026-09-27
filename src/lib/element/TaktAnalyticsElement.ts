@@ -19,18 +19,10 @@ export function createTaktAnalyticsElement(): CustomElementConstructor {
       const attr = (name: string): string | null => this.getAttribute(name)
 
       const sampleRateAttr = attr('sample-rate')
-      const queryParamsAttr = attr('query-params')
-      const queryParams = queryParamsAttr
-        ? queryParamsAttr.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
-      const excludeAttr = attr('exclude')
-      const exclude = excludeAttr
-        ? excludeAttr.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
-      const redactRoutesAttr = attr('redact-routes')
-      const redactRoutes = redactRoutesAttr
-        ? redactRoutesAttr.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
+      const list = (name: string): string[] | undefined => {
+        const items = (attr(name) ?? '').split(',').map((s) => s.trim()).filter(Boolean)
+        return items.length > 0 ? items : undefined
+      }
 
       const takt = createTakt({
         domain: attr('domain') ?? undefined,
@@ -42,9 +34,9 @@ export function createTaktAnalyticsElement(): CustomElementConstructor {
         ...(this.hasAttribute('debug') ? { debug: truthy(attr('debug')) } : {}),
         ...(sampleRateAttr !== null && Number.isFinite(parseFloat(sampleRateAttr)) ? { sampleRate: parseFloat(sampleRateAttr) } : {}),
         ...(this.hasAttribute('track-query') ? { trackQuery: truthy(attr('track-query')) } : {}),
-        ...(queryParams && queryParams.length > 0 ? { queryParams } : {}),
-        ...(exclude && exclude.length > 0 ? { exclude } : {}),
-        ...(redactRoutes && redactRoutes.length > 0 ? { redactRoutes } : {}),
+        queryParams: list('query-params'),
+        exclude: list('exclude'),
+        redactRoutes: list('redact-routes'),
       })
       if (truthy(attr('spa'))) this.disposers.push(takt.enableSpa())
       if (this.hasAttribute('outbound')) this.disposers.push(takt.enableOutbound())
