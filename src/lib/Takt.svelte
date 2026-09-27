@@ -35,6 +35,9 @@
     exclude?: string[]
     /** Transform each URL before it is sent (dev-controlled; function prop only). */
     scrubUrl?: (url: string) => string
+    redactRoutes?: string[]
+    routeTemplates?: boolean
+    routeTemplate?: () => string | null | undefined
     /** Call `enableTagged()` to auto-track `[data-takt-event]` elements. */
     tagged?: boolean
   }
@@ -56,13 +59,16 @@
     queryParams,
     exclude,
     scrubUrl,
+    redactRoutes,
+    routeTemplates,
+    routeTemplate,
     tagged = false,
   }: Props = $props()
 
   const contextStore = provideTakt()
 
   onMount(() => {
-    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, debug, sampleRate, trackQuery, queryParams, exclude, scrubUrl })
+    const takt = createTakt({ domain, endpoint, scriptOrigin, respectDnt, excludeLocalhost, enabled, debug, sampleRate, trackQuery, queryParams, exclude, scrubUrl, redactRoutes, routeTemplates, routeTemplate })
     const disposers: VoidFunction[] = []
     if (spa) disposers.push(takt.enableSpa())
     if (outbound) disposers.push(takt.enableOutbound())

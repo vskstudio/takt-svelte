@@ -167,4 +167,21 @@ describe('<takt-analytics> advanced options', () => {
     await boot({ domain: 'exemple.fr' })
     expect(enableTagged).not.toHaveBeenCalled()
   })
+
+  it('redact-routes attribute → comma-separated list forwarded as redactRoutes; absent → not forwarded', async () => {
+    await boot({ domain: 'exemple.fr', 'redact-routes': '/verify/[token], /reset/:code,,' })
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ redactRoutes: ['/verify/[token]', '/reset/:code'] }),
+    )
+
+    vi.clearAllMocks()
+    document.body.innerHTML = ''
+    await boot({ domain: 'exemple.fr' })
+    expect(createTakt).not.toHaveBeenCalledWith(expect.objectContaining({ redactRoutes: expect.anything() }))
+  })
+
+  it('never forwards routeTemplates: the element has no router', async () => {
+    await boot({ domain: 'exemple.fr', 'route-templates': '' })
+    expect(createTakt).not.toHaveBeenCalledWith(expect.objectContaining({ routeTemplates: expect.anything() }))
+  })
 })
